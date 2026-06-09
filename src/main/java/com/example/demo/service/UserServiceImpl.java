@@ -6,6 +6,8 @@ import com.example.demo.repository.UserRepository;
 import com.example.demo.util.TwitterValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,5 +25,14 @@ public class UserServiceImpl implements UserService{
     public User findById(Long id) {
         TwitterValidation.validateId(id);
         return userRepository.findById(id).orElseThrow(()-> new ApiException("User is not found with id: "+ id, HttpStatus.NOT_FOUND));
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByEmail(username).orElseThrow(()->{
+                    System.out.println("User credentils not valid");
+                    throw new UsernameNotFoundException("User credentils not valid");
+                }
+        );
     }
 }
