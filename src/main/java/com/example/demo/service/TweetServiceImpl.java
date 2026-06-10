@@ -1,6 +1,5 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.TweetRequest;
 import com.example.demo.entity.Tweet;
 import com.example.demo.exceptions.ApiException;
 import com.example.demo.repository.TweetRepository;
@@ -26,6 +25,11 @@ public class TweetServiceImpl implements TweetService {
     @Override
     public Tweet save(Tweet tweet) {
         return tweetRepository.save(tweet);
+    }
+
+    @Override
+    public List<Tweet> findAll() {
+        return tweetRepository.findAllByOrderByIdDesc();
     }
 
     @Override

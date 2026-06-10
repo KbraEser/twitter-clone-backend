@@ -11,6 +11,8 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/comment")
 public class CommentController {
@@ -24,6 +26,11 @@ public class CommentController {
         this.commentService = commentService;
         this.userService = userService;
         this.tweetService = tweetService;
+    }
+
+    @GetMapping("/findByTweetId")
+    public List<Comment> findAllByTweetId(@RequestParam Long id) {
+        return commentService.findAllByTweetId(id);
     }
 
     @PostMapping
@@ -45,13 +52,12 @@ public class CommentController {
     public Comment update(@PathVariable Long id, @Valid @RequestBody CommentRequest commentRequest) {
         Comment newComment = new Comment();
         newComment.setContent(commentRequest.getContent());
-        return commentService.update(id, newComment);
+        return commentService.update(id, commentRequest.getUserId(), newComment);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteById(@PathVariable Long id) {
-        Comment comment = commentService.findById(id);
-        commentService.delete(comment.getId());
+    public void deleteById(@PathVariable Long id, @RequestParam Long userId) {
+        commentService.delete(id, userId);
     }
 
 

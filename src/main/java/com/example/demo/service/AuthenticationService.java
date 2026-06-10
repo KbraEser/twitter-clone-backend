@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.RegisterRequest;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 
@@ -22,21 +23,21 @@ public class AuthenticationService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User register(String email, String password) {
-        userRepository.findByEmail(email).ifPresent(m -> {
+    public User register(RegisterRequest registerRequest) {
+        userRepository.findByEmail(registerRequest.email()).ifPresent(m -> {
             throw new RuntimeException("User with given email already exist");
         });
 
-        String encodedPassword = passwordEncoder.encode(password);
-
+        String encodedPassword = passwordEncoder.encode(registerRequest.password());
 
         User user = new User();
-        user.setEmail(email);
+        user.setName(registerRequest.name());
+        user.setSurname(registerRequest.surname());
+        user.setEmail(registerRequest.email());
         user.setPassword(encodedPassword);
-
+        user.setPicture(registerRequest.picture());
 
         return userRepository.save(user);
-
     }
 }
 

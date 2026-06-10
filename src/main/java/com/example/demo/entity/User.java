@@ -1,9 +1,8 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +17,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name="users", schema = "public")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +36,7 @@ public class User implements UserDetails {
     @Column(name = "picture", columnDefinition = "TEXT")
     private String picture;
 
+    @JsonIgnore
     @Column(name = "password",nullable = false)
     private String password;
 

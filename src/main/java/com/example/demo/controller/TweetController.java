@@ -26,19 +26,27 @@ public class TweetController {
         this.userService = userService;
     }
 
+    @GetMapping("/findAll")
+    public List<Tweet> findAll() {
+        return tweetService.findAll();
+    }
+
     @PostMapping
-    public Tweet save(@Valid @RequestBody TweetRequest tweetRequest){
-        Tweet tweet =new Tweet();
-        tweet.setContent(tweetRequest.getContent());
+    public Tweet save(@Valid @RequestBody TweetRequest tweetRequest) {
+        Tweet tweet = new Tweet();
+
+        String content = tweetRequest.getContent();
+        tweet.setContent(content != null && !content.trim().isEmpty() ? content : null);
 
         User user = userService.findById(tweetRequest.getUserId());
         tweet.setUser(user);
-        if(tweetRequest.getTweetId() != null){
+
+        if (tweetRequest.getTweetId() != null) {
             Tweet parentTweet = tweetService.findById(tweetRequest.getTweetId());
             tweet.setParentTweet(parentTweet);
         }
-        return tweetService.save(tweet);
 
+        return tweetService.save(tweet);
     }
 
     @GetMapping("/findByUserId")
@@ -63,6 +71,8 @@ public class TweetController {
         Tweet deletedData = tweetService.findById(id);
         tweetService.delete(deletedData);
     }
+
+
 
 
 }

@@ -8,6 +8,8 @@ public interface TweetService {
 
     Tweet save(Tweet tweet);
 
+    List<Tweet> findAll();
+
     List<Tweet> findAllByUserId(Long id);
 
     Tweet findById(Long id);
