@@ -11,9 +11,6 @@ public class CommentRequest {
     @Size( max = 200, message = "Comment must be at most 200 characters.")
     private String content;
 
-    @NotNull(message = "The commenter's user ID cannot be empty.")
-    private Long userId;
-
     @NotNull(message = "The tweet ID being commented on cannot be empty.")
     private Long tweetId;
 

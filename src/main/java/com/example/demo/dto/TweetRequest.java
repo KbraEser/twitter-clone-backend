@@ -1,15 +1,10 @@
 package com.example.demo.dto;
 
 import jakarta.validation.constraints.AssertTrue;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 public class TweetRequest {
-    @NotNull(message = "userId cannot be null")
-    private Long userId;
-
     private String content;
 
     private Long tweetId;

@@ -6,7 +6,7 @@ import com.example.demo.entity.Tweet;
 import com.example.demo.entity.User;
 import com.example.demo.service.CommentService;
 import com.example.demo.service.TweetService;
-import com.example.demo.service.UserService;
+import com.example.demo.util.SecurityUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,14 +17,12 @@ import java.util.List;
 @RequestMapping("/comment")
 public class CommentController {
 
-    private CommentService commentService;
-    private UserService userService;
-    private TweetService tweetService;
+    private final CommentService commentService;
+    private final TweetService tweetService;
 
     @Autowired
-    public CommentController(CommentService commentService, UserService userService, TweetService tweetService) {
+    public CommentController(CommentService commentService, TweetService tweetService) {
         this.commentService = commentService;
-        this.userService = userService;
         this.tweetService = tweetService;
     }
 
@@ -38,29 +36,24 @@ public class CommentController {
         Comment newComment = new Comment();
         newComment.setContent(commentRequest.getContent());
 
-        User user = userService.findById(commentRequest.getUserId());
+        User user = SecurityUtils.getCurrentUser();
         newComment.setUser(user);
 
-        Tweet tweet= tweetService.findById(commentRequest.getTweetId());
+        Tweet tweet = tweetService.findById(commentRequest.getTweetId());
         newComment.setTweet(tweet);
 
         return commentService.save(newComment);
-
     }
 
     @PutMapping("/{id}")
     public Comment update(@PathVariable Long id, @Valid @RequestBody CommentRequest commentRequest) {
         Comment newComment = new Comment();
         newComment.setContent(commentRequest.getContent());
-        return commentService.update(id, commentRequest.getUserId(), newComment);
+        return commentService.update(id, SecurityUtils.getCurrentUser().getId(), newComment);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteById(@PathVariable Long id, @RequestParam Long userId) {
-        commentService.delete(id, userId);
+    public void deleteById(@PathVariable Long id) {
+        commentService.delete(id, SecurityUtils.getCurrentUser().getId());
     }
-
-
-
-
 }
