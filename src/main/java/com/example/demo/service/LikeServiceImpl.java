@@ -1,11 +1,8 @@
 package com.example.demo.service;
 
-import com.example.demo.TwitterApplication;
 import com.example.demo.entity.Like;
 import com.example.demo.exceptions.ApiException;
-import com.example.demo.repository.CommentRepository;
 import com.example.demo.repository.LikeRepository;
-import com.example.demo.repository.TweetRepository;
 import com.example.demo.util.TwitterValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

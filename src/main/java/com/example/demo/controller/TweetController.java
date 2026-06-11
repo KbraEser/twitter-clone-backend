@@ -4,26 +4,22 @@ import com.example.demo.dto.TweetRequest;
 import com.example.demo.entity.Tweet;
 import com.example.demo.entity.User;
 import com.example.demo.service.TweetService;
-import com.example.demo.service.UserService;
+import com.example.demo.util.SecurityUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/tweet")
 public class TweetController {
 
-
-    private TweetService tweetService;
-    private UserService userService;
+    private final TweetService tweetService;
 
     @Autowired
-    public TweetController(TweetService tweetService, UserService userService) {
+    public TweetController(TweetService tweetService) {
         this.tweetService = tweetService;
-        this.userService = userService;
     }
 
     @GetMapping("/findAll")
@@ -38,7 +34,7 @@ public class TweetController {
         String content = tweetRequest.getContent();
         tweet.setContent(content != null && !content.trim().isEmpty() ? content : null);
 
-        User user = userService.findById(tweetRequest.getUserId());
+        User user = SecurityUtils.getCurrentUser();
         tweet.setUser(user);
 
         if (tweetRequest.getTweetId() != null) {
@@ -50,29 +46,24 @@ public class TweetController {
     }
 
     @GetMapping("/findByUserId")
-    public List<Tweet> findAllByUserId(@RequestParam Long id){
+    public List<Tweet> findAllByUserId(@RequestParam Long id) {
         return tweetService.findAllByUserId(id);
     }
 
     @GetMapping("/findById")
-    public Tweet findById(@RequestParam Long id){
+    public Tweet findById(@RequestParam Long id) {
         return tweetService.findById(id);
     }
 
     @PutMapping("/{id}")
-    public Tweet update(@PathVariable Long id, @Valid @RequestBody TweetRequest tweetRequest){
+    public Tweet update(@PathVariable Long id, @Valid @RequestBody TweetRequest tweetRequest) {
         Tweet updatedData = new Tweet();
         updatedData.setContent(tweetRequest.getContent());
-        return tweetService.update(id,updatedData);
+        return tweetService.update(id, SecurityUtils.getCurrentUser().getId(), updatedData);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteById(@PathVariable Long id){
-        Tweet deletedData = tweetService.findById(id);
-        tweetService.delete(deletedData);
+    public void deleteById(@PathVariable Long id) {
+        tweetService.delete(id, SecurityUtils.getCurrentUser().getId());
     }
-
-
-
-
 }

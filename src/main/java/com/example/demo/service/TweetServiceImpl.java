@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TweetServiceImpl implements TweetService {
@@ -46,15 +45,16 @@ public class TweetServiceImpl implements TweetService {
     }
 
     @Override
-    public Tweet update(Long id,Tweet tweet) {
-
+    public Tweet update(Long id, Long userId, Tweet tweet) {
         TwitterValidation.validateId(id);
+        TwitterValidation.validateId(userId);
 
-        Optional<Tweet> tweetOptional = tweetRepository.findById(id);
+        Tweet existingTweet = tweetRepository.findById(id)
+                .orElseThrow(() -> new ApiException("Tweet to update not found with ID: " + id, HttpStatus.NOT_FOUND));
 
-        Tweet existingTweet =tweetOptional.orElseThrow(()->
-                        new ApiException("Tweet to update not found with ID: " + id, HttpStatus.NOT_FOUND)
-                );
+        if (!existingTweet.getUser().getId().equals(userId)) {
+            throw new ApiException("You can only update your own tweet.", HttpStatus.FORBIDDEN);
+        }
 
         existingTweet.setContent(tweet.getContent());
         existingTweet.setParentTweet(tweet.getParentTweet());
@@ -63,9 +63,17 @@ public class TweetServiceImpl implements TweetService {
     }
 
     @Override
-    public void delete(Tweet tweet) {
+    public void delete(Long id, Long userId) {
+        TwitterValidation.validateId(id);
+        TwitterValidation.validateId(userId);
 
-        TwitterValidation.validateId(tweet.getId());
+        Tweet tweet = tweetRepository.findById(id)
+                .orElseThrow(() -> new ApiException("Tweet not found with ID: " + id, HttpStatus.NOT_FOUND));
+
+        if (!tweet.getUser().getId().equals(userId)) {
+            throw new ApiException("You can only delete your own tweet.", HttpStatus.FORBIDDEN);
+        }
+
         tweetRepository.delete(tweet);
     }
 }

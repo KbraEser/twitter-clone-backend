@@ -14,7 +14,7 @@ public interface TweetService {
 
     Tweet findById(Long id);
 
-    Tweet update(Long id,Tweet tweet);
+    Tweet update(Long id, Long userId, Tweet tweet);
 
-    void delete(Tweet tweet);
+    void delete(Long id, Long userId);
 }
