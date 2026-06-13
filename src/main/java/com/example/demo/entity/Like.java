@@ -21,7 +21,7 @@ public class Like {
     @JoinColumn(name="comment_id")
     private Comment comment;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="tweets_id")
     private Tweet tweet;
 
